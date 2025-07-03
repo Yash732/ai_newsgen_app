@@ -3,3 +3,4 @@ yfinance
 colorama
 smolagents
 smolagents[mcp]
+supabase

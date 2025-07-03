@@ -20,9 +20,9 @@ model = LiteLLMModel(
 
 
 #for sse
-with ToolCollection.from_mcp({"url": "http://localhost:8000/mcp", "transport": "streamable-http"}, trust_remote_code = True) as tool_collection:
+with ToolCollection.from_mcp({"url": "https://mcp-stock-ticker.onrender.com/mcp", "transport": "streamable-http"}, trust_remote_code = True) as tool_collection:
     agent = ToolCallingAgent(tools = [*tool_collection.tools], model = model)
-    agent.run("stock price of IBM?")
+    agent.run("stock info for AMZN?")
 
 #Querying the model
 
