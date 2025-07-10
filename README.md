@@ -1,6 +1,8 @@
-# AI News Generation Backend
+# AI News Generation
 
-This project is a backend system for fetching, summarizing, and interacting with the latest news and stock updates using **LangGraph**, **FastAPI**, and a set of AI tools exposed via an **MCP (Multi-Component Protocol) server**.
+## Backend
+
+A backend system for fetching, summarizing, and interacting with the latest news and stock updates using **LangGraph**, **FastAPI**, and a set of AI tools exposed via an **MCP (Multi-Component Protocol) server**.
 
 It supports:
 - Automatic news scraping and summarization
@@ -61,5 +63,5 @@ python api/mcp_server.py
 ```bash
 uvicorn endpoints:app --reload --port 8080 
 ```
-### Running the frontend
+## Frontend
   To be added
