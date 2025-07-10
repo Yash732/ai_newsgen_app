@@ -8,53 +8,55 @@ from litellm import completion
 from typing import List
 from dotenv import load_dotenv
 import requests
-from sentence_transformers import SentenceTransformer
+# from sentence_transformers import SentenceTransformer
 load_dotenv()
 ##Using openAI model
 from ai_resources.initialize_llm import chat_with_model
-from ai_resources.initialize_db import get_embeddings
-
+from ai_resources.initialize_db import get_embeddings, insert_embeddings
 
 # mcp connection
 mcp = FastMCP(
     "yfin-server",
-    host = "0.0.0.0", 
+    host = "127.0.0.1", 
     port = 8000,
-    request_timeout = 1000000
     )
+
+#connection to supabase server
+url: str = os.getenv("SUPABASE_URL")
+key: str = os.getenv("SUPABASE_KEY")
+supabase: Client = create_client(url, key)
+
 # #initializing llm model
 # model = LiteLLMModel(
 #     model_id = "ollama/phi3"
 # )
 
-
-
 @mcp.tool()
-def stock_info(stock_ticker: str)->str:
-    """This tool returns information about a given stock given it's ticker.
-    Args:
-        stock_ticker: a alphanumeric stock ticker
-        Example payload: "IBM"
+def stock_info(stock_ticker: str) -> str:
+    """
+    Returns background company information for the given stock ticker symbol (e.g., 'AAPL', 'GOOG').
 
-    Returns:
-        str:information about the company
-        Example Respnse "Background information for IBM: {'address1': 'One New Orchard Road', 'city': 'Armonk', 'state': 'NY', 'zip': '10504', 'country': 'United States', 'phone': '914 499 1900', 'website': 
-                'https://www.ibm.com', 'industry': 'Information Technology Services',... }" 
-        """
+    Use this tool when the user requests stock details or profile information.
+
+    Args:
+        stock_ticker: A valid alphanumeric stock ticker (e.g., 'AAPL')
+    """
+    
+    print("Our current stock: ",stock_ticker)
     dat = yf.Ticker(stock_ticker)
     return str(f"Background information for {stock_ticker}: {dat.info}")
 
 @mcp.tool()
 def stock_price(stock_ticker: str)->str:
-    """This tool returns the last known price for a given stock ticker.
-    Args:
-        stock_ticker: a alphanumeric stock ticker 
-        Example payload: "NVDA"
+    """
+    Returns latest stock prices for the given stock ticker symbol (e.g., 'AAPL', 'GOOG').
 
-    Returns:
-        str:"Ticker: Last Price" 
-        Example Respnse "NVDA: $100.21" 
-        """
+    Use this tool when the user requests current stock prices or market data.
+
+    Args:
+        stock_ticker: A valid alphanumeric stock ticker (e.g., 'AAPL')
+    """
+    print("Our current stock: ",stock_ticker)
     dat = yf.Ticker(stock_ticker)
     historical_prices = dat.history(period = "1mo")
 
@@ -67,8 +69,7 @@ def stock_price(stock_ticker: str)->str:
 import time
 
 # llm model for summarization
-def summarize(news_data: List[str])-> str:
-    print(f"****\n {type(news_data)} \n****")
+def summarize_news(news_data: List[str])-> str:
     combined_text = "\n\n".join(news_data)
 
     prompt = (
@@ -94,36 +95,24 @@ def summarize(news_data: List[str])-> str:
     print(f"********Summary generated inside function in {elapsed_time}**********")
     #response being a list or a string
     content = response[0] if isinstance(response, list) else response
-    print(type(content))
     return content
 
-
-#Utilizing Tavily API for user search
-tavily_api_key = os.getenv("TAVILY_API_KEY")
 @mcp.tool()
-def stock_news(stock_ticker: str)->str:
-    """This tool returns the news data for the stock company whose stock ticke is provided by the user from tavily search.
-    Args:
-        stock_ticker: a alphanumeric stock ticker 
-        Example payload: "NVDA"
-
-    Returns:
-        List[str]: "Ticker: News data" 
-        Example Response:
-        "
-        News1 data
-        News2 data
-        ...
-        " 
+def latest_news(user_query: str)->str:
+    """Fetches *real-time latest news* for the user's query using Tavily.
+    Use this tool when the user asks for today's news or most recent updates.
     """
-    query = f"{stock_ticker} stock news"
+    #Utilizing Tavily API for user search
+    tavily_api_key = os.getenv("TAVILY_API_KEY")
+
+    query = f"{user_query}"
     url = "https://api.tavily.com/search"
     headers = {"Authorization": f"Bearer {tavily_api_key}"}
     max_results = 5 
 
     payload = {
         "query": query,
-        "search_depth": "advanced",   # "basic" for faster results
+        "search_depth": "basic",   # "advanced" for more accurate results
         "include_answer": True,        # Include a concise summary
         "include_raw_content": False, # Set to True to include full page text
         "max_results": max_results
@@ -136,7 +125,7 @@ def stock_news(stock_ticker: str)->str:
         results = data.get("results", [])
 
         if not results:
-            return f"No news found for {stock_ticker}."
+            return f"No news found."
 
         news_data = []
         for res in results:
@@ -144,30 +133,35 @@ def stock_news(stock_ticker: str)->str:
             snippet = res.get("content", "No summary available")
             url = res.get("url", "") #for appending the links as well
             news_data.append(f"* {title}\n{snippet}\n")
+        #Saving the summarized news to the database through embeddings
+        print("***********Inserting news data into the database**********")
+        insert_embeddings(news_data)
+
         print("******raw news generated by tavily*******")
-        summarized_news = summarize(news_data)
+        summarized_news = summarize_news(news_data)
+        
+
         print("************returning final summarized news ********")
-        return f"Important news for {stock_ticker}:\n\n{type(summarized_news)}"
+        return f"Important news:\n\n{summarized_news}"
 
     else:
         return f"Tavily request failed: {response.status_code}"
 
-#connection to supabase server
-url: str = os.getenv("SUPABASE_URL")
-key: str = os.getenv("SUPABASE_KEY")
-supabase: Client = create_client(url, key)
-model = SentenceTransformer('all-MiniLM-L6-v2')
+
+
+# open-source embedding model
+# model = SentenceTransformer('all-MiniLM-L6-v2')
 
 # @mcp.resource("similar_news://search/{query}")
 @mcp.tool()
 def list_similar_articles(query: str) ->str:
     """
-    This resource allows you to fetch similar news by passing a query,
-    returning similar news from Supabase using pgvector semantic search.
+    Retrieves archived or semantically similar past news articles from Supabase.
+    Not meant for fetching today's breaking news.
     """
     try:
-        embedding = model.encode(query).tolist()
-        response = supabase.rpc("match_documents",{
+        embedding = get_embeddings([query])[0] # To get the actual embedding vector from the list
+        response = supabase.rpc("match_docs",{
             "query_embedding": embedding,
             "match_threshold": 0.78,
             "match_count":5
@@ -177,14 +171,13 @@ def list_similar_articles(query: str) ->str:
         if documents:
             for doc in documents:
                 similar_news.append(f"{doc['content']}\n")
-            summarized_similar_news = summarize(similar_news)
+            summarized_similar_news = summarize_news(similar_news)
             return summarized_similar_news
         else:
             return f"No similar news related to your query"
     except Exception as e:
         return f"Error querying Supabase: {str(e)}"
 
-# response = list_similar_articles("Elon Musk xAI")
-# print(response)
 if __name__ == "__main__":
     mcp.run(transport = "streamable-http")
+

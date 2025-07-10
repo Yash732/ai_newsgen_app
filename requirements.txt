@@ -4,3 +4,16 @@ colorama
 smolagents
 smolagents[mcp]
 supabase
+dotenv
+sentence_transformers
+newspaper3k
+feedparser
+langchain
+langchain_community
+langgraph
+langchain_openai
+fastapi
+uvicorn
+litellm
+ollama
+langchain_mcp_adapters

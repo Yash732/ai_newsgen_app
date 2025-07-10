@@ -5,7 +5,7 @@ import os
 from openai import AzureOpenAI
 from dotenv import load_dotenv
 from supabase import create_client, Client
-
+from typing import List, Union
 load_dotenv()
 #defining the embedding model
 embed_key = os.getenv("EMBED_KEY")
@@ -20,7 +20,7 @@ client = AzureOpenAI(
     azure_endpoint= endpoint,
 )
 # Function to get embeddings for a list of strings
-def get_embeddings(news_list: list[str])->list:
+def get_embeddings(news_list: List[str])->List[List[float]]:
     response = client.embeddings.create(
     input= news_list,
     model=deployment
@@ -34,7 +34,7 @@ key: str = os.getenv("SUPABASE_KEY")
 supabase: Client = create_client(url, key)
 
 # Function to insert content and embeddings into Supabase
-def insert_embeddings(news_list: list[str]):
+def insert_embeddings(news_list: List[str]):
     embeddings = get_embeddings(news_list)
     rows = []
     for content, embedding in zip(news_list, embeddings):
@@ -45,5 +45,3 @@ def insert_embeddings(news_list: list[str]):
     response = supabase.table("news_list").insert(rows).execute()
     return response
 
-list = ["Dummy news1", "Dummy news2", "dummy news3"]
-insert_embeddings(list)
