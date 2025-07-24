@@ -9,5 +9,6 @@ class State(TypedDict):
     
     mode: str # either user_query or summarize_news mode 
     user_input: Optional[str]
-    agent_response: Optional[str]
+    agent_response: Optional[str]   
+    prompt: Optional[str]
     

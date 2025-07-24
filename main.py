@@ -10,7 +10,7 @@ async def test_graph():
     print("Graph built successfully!")
     # # Example query to test agent path
     response =await graph.ainvoke({
-        "mode": "query",
+        "mode": "update",
         "user_input": "Latest news on tourism in Kashmir after Pahalgam attack. Use tools only. Do not answer directly.",
     })
     print("completion: ", response)

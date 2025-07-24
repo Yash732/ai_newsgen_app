@@ -46,25 +46,37 @@ def news_scraper(state: State):
     }
 
 def summarize_articles(state: State):
-    """
-    Summarizes the articles in the corpus by each article using LLM.
+    """  
+    Uses an LLM to generate clean and detailed summaries of extracted news articles.
+    Returns:
+        Numbered summaries of all articles, each on a new line.
     """
 
     corpus = state.get("extracted_text", "")
+    added_prompt = state.get("prompt", "")
     if not corpus:
-        return {"agent_response": ""}
+        return {"summary": ""}
     
     combined_text = "\n\n".join(corpus)
     prompt = (
-        f"Summarize the following news, article by article. "
-        f"Only include relevant and factual information. Remove any ad content or links.\n\n{combined_text}"
+    "Summarize each of the following news articles individually.\n\n"
+    "Instructions:\n"
+    "- Number each summary (e.g., 1., 2., 3.).\n"
+    "- Keep each summary factual, concise, and relevant.\n"
+    "- Remove all advertisements, promotional content, and external links.\n"
+    "- If available, include date/time and source-specific facts.\n"
+    "- Do not add introductions, conclusions, or extra commentary.\n\n "
+    f"{added_prompt}\n\n"
+    "Begin summarizing the articles below:\n\n"
+    f"{combined_text}"
     )
+
     response = chat_with_model(prompt)
     content = response[0] if isinstance(response, list) else response
     
     print("Articles summarized successfully.")
     return {
-        "agent_response": content, #saving the current generated summary of news articles
+        "summary": content, #saving the current generated summary of news articles
         "request_id": state.get("request_id", ""),
     }
 
@@ -82,7 +94,7 @@ def display_summary(state: State):
     """
     Displays the summary of all the articles spacing them appropriately with line breaks and numbering them.
     """
-    summary = state.get("agent_response", "")
+    summary = state.get("summary", "")
 
     if not summary:
         print("No summary available.")
@@ -115,11 +127,24 @@ async def handle_user_query(state: State):
             "content": user_input}
         ]}
     )
+    # To handle state persistence
+    state["extracted_text"] = ""
+    # Taking only message content into consideration as metadata is not required here
+    state['extracted_text'] = "\n".join(m.content for m in agent_response["messages"])
 
+
+    # For testing agent tool calls
     for m in agent_response["messages"]:
         m.pretty_print()
-    # return agent_response.get("output", "No respone from agent")
-    state["agent_response"] = agent_response
+
+    #For updating the final prompt in summarize_articles
+    prompt = """
+            Summarize latest news first followed by the past similar news articles.
+            """
+    state["prompt"] = prompt
+
+    # Generate a summary indicating latest and past news 
+
 
     # --------- Using Ollama (Currently having issues in fetching tools) -------
 

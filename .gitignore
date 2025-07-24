@@ -1,4 +1,6 @@
 .env
 venv/
 example.ipynb
+frontend/node_modules
+
 
