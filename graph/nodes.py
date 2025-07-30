@@ -10,6 +10,13 @@ from langgraph.prebuilt import create_react_agent
 from langchain_mcp_adapters.tools import load_mcp_tools
 from smolagents import ToolCallingAgent, LiteLLMModel
 
+# News genres considered for the application
+genres = ['finance', 'sports', 'technology', 'politics', 'gaming']
+
+rss_url_list = [
+    "https://b2b.economictimes.indiatimes.com/rss/recentstories",
+    "https://sports.ndtv.com/rss/all"        
+                ]
 def news_scraper(state: State):
     """
     Scrapes news articles from Economic Times and NDTV Sports and processes them.
@@ -49,7 +56,7 @@ def summarize_articles(state: State):
     """  
     Uses an LLM to generate clean and detailed summaries of extracted news articles.
     Returns:
-        Numbered summaries of all articles, each on a new line.
+        Numbered summaries of all articles, each on a new line with title and summary as placeholders.
     """
 
     corpus = state.get("extracted_text", "")
@@ -59,16 +66,18 @@ def summarize_articles(state: State):
     
     combined_text = "\n\n".join(corpus)
     prompt = (
-    "Summarize each of the following news articles individually.\n\n"
-    "Instructions:\n"
-    "- Number each summary (e.g., 1., 2., 3.).\n"
-    "- Keep each summary factual, concise, and relevant.\n"
-    "- Remove all advertisements, promotional content, and external links.\n"
-    "- If available, include date/time and source-specific facts.\n"
-    "- Do not add introductions, conclusions, or extra commentary.\n\n "
-    f"{added_prompt}\n\n"
-    "Begin summarizing the articles below:\n\n"
-    f"{combined_text}"
+        "Summarize each of the following news articles individually.\n\n"
+        "Instructions:\n"
+        "- Number each summary (e.g., 1., 2., 3.) to indicate a new article.\n"
+        "- The first line of each summary must be the title.\n"
+        "- The lines that follow should contain the main news content.\n"
+        "- Keep summaries factual, and relevant.\n"
+        "- Do not include any introductions, conclusions, or commentary.\n"
+        "- Exclude all advertisements, promotional content, or external links.\n"
+        "- Include dates or sources mentioned only if they add value to the summary.\n\n"
+        f"{added_prompt}\n\n"
+        "Begin summarizing the articles below:\n\n"
+        f"{combined_text}"
     )
 
     response = chat_with_model(prompt)

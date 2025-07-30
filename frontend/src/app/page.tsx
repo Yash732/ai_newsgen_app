@@ -2,8 +2,14 @@
 "use client";
 import { useEffect, useState } from "react";
 
+type NewsItem = {
+  title: string,
+  news: string
+}
+
 export default function HomePage() {
-  const [summary, setSummary] = useState("");
+  const [newsArray, setNewsArray] = useState<NewsItem[]>([]);
+  const [error, setError] = useState("");
 
   const fetchNewsSummary = async () => {
     try {
@@ -14,10 +20,18 @@ export default function HomePage() {
         },
         body: JSON.stringify({ mode: "update" }),
       });
-      const data = await res.json();
-      setSummary(data.response || "No update received.");
-    } catch (error) {
-      setSummary("Error fetching update.");
+      const data  = await res.json()
+
+      if (Array.isArray(data.response)) {
+        setNewsArray(data.response);
+        setError("");
+      } else {
+        setError("Response was not in the expected array format.");
+        setNewsArray([]);
+      }
+    } catch (err) {
+      setError("Error fetching update.");
+      setNewsArray([]);
     }
   };
 
@@ -27,12 +41,28 @@ export default function HomePage() {
     return () => clearInterval(interval);
   }, []);
 
-  return (
+    return (
     <main className="p-6 max-w-4xl mx-auto">
       <h1 className="text-3xl font-bold mb-4">📰 AI News Summary (Live)</h1>
-      <pre className="bg-gray-100 p-4 rounded whitespace-pre-wrap text-gray-800">
-        {summary}
-      </pre>
+
+      {error && (
+        <div className="bg-red-100 text-red-800 p-4 rounded mb-4">{error}</div>
+      )}
+
+      {newsArray.length === 0 && !error && (
+        <div className="text-gray-500">Loading news...</div>
+      )}
+
+      <div className="grid gap-4">
+        {newsArray.map((item, idx) => (
+          <div key={idx} className="bg-white shadow-md p-4 rounded border">
+            <h2 className="font-semibold text-lg text-blue-700 mb-2">
+              {item.title}
+            </h2>
+            <p className="text-gray-800 whitespace-pre-wrap">{item.news}</p>
+          </div>
+        ))}
+      </div>
     </main>
   );
 }
