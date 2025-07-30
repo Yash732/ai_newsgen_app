@@ -6,7 +6,7 @@ class State(TypedDict):
     embeddings: List[float]
     # metadata: Optional[dict[str, Any]]  # Optional metadata for additional information
     summary: str
-    
+    genre: str # The news genre selected by user on frontend
     mode: str # either user_query or summarize_news mode 
     user_input: Optional[str]
     agent_response: Optional[str]   

@@ -13,18 +13,35 @@ from smolagents import ToolCallingAgent, LiteLLMModel
 # News genres considered for the application
 genres = ['finance', 'sports', 'technology', 'politics', 'gaming']
 
-rss_url_list = [
-    "https://b2b.economictimes.indiatimes.com/rss/recentstories",
-    "https://sports.ndtv.com/rss/all"        
-                ]
+GENRE_RSS_FEEDS = {
+    "finance": [
+        "https://b2b.economictimes.indiatimes.com/rss/recentstories",
+        "https://www.moneycontrol.com/rss/latestnews.xml"
+    ],
+    "sports": [
+        "https://sports.ndtv.com/rss/all",
+        "https://api.foxsports.com/v2/content/optimized-rss?partnerKey=MB0Wehpmuj2lUhuRhQaafhBjAJqaPU244mlTDK1i&size=30"
+    ],
+    "technology": [
+        "https://gadgets.ndtv.com/rss/feeds",
+        "https://www.gadgets360.com/rss/feeds"
+    ],
+    "politics": [
+        "https://timesofindia.indiatimes.com/rssfeeds/296589292.cms",
+        "https://www.indianewsnetwork.com/rss.en.politics.xml"
+    ],
+    "gaming": [
+        "https://www.gamespot.com/feeds/mashup/",
+        "https://rss.app/feeds/tJoxzBDfFXCo7823.xml"
+    ]
+}   
+                
 def news_scraper(state: State):
     """
-    Scrapes news articles from Economic Times and NDTV Sports and processes them.
+    Scrapes news articles from the provided genre and urls and processes them.
     """
-    rss_url_list = [
-        "https://b2b.economictimes.indiatimes.com/rss/recentstories",
-        "https://sports.ndtv.com/rss/all"        
-                    ]
+    genre = state.get("genre")
+    rss_url_list = GENRE_RSS_FEEDS(genre, [])
     corpus = []
     # Parsing the RSS feeds from Economic Times and NDTV 
     for news_url in rss_url_list:
