@@ -7,7 +7,6 @@ supabase
 dotenv
 sentence_transformers
 newspaper3k
-newspaper
 feedparser
 langchain
 langchain_community
