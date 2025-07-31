@@ -34,7 +34,7 @@ export default function ChatPage() {
       } else {
         setError("Unexpected response format.");
       }
-    } catch (error) {
+    } catch { 
       setError("Error sending query.");
     }
     setLoading(false);
