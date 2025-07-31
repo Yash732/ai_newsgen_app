@@ -1,3 +1,4 @@
+ # Service 1: The MCP Server 
 services:
   - type: web
     name: mcp-server
@@ -19,7 +20,9 @@ services:
         fromSecret: OPENAI_API_KEY
       - key: AZURE_ENDPOINT
         fromSecret: AZURE_ENDPOINT
-
+      - key: PORT
+        value: 8000
+# Service 2: The FastAPI Backend API
   - type: web
     name: fastapi-endpoints
     env: python
@@ -40,3 +43,15 @@ services:
         fromSecret: OPENAI_API_KEY
       - key: AZURE_ENDPOINT
         fromSecret: AZURE_ENDPOINT
+
+ # Service 3: The Next.js Frontend
+  - type: static
+    name: frontend
+    # These commands install dependencies and build your Next.js app
+    buildCommand: "cd frontend && npm install && npm run build"
+    # The folder where your built frontend is located
+    publishDirectory: "frontend/out"
+    # Rewrites all paths to /index.html for client-side routing
+    rewrites:
+      - source: "/*"
+        destination: "/index.html"

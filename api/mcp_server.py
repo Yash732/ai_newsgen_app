@@ -7,6 +7,7 @@ from smolagents import ToolCallingAgent, ToolCollection, LiteLLMModel
 from litellm import completion
 from typing import List
 from dotenv import load_dotenv
+import time
 import requests
 # from sentence_transformers import SentenceTransformer
 load_dotenv()
@@ -67,37 +68,34 @@ def stock_price(stock_ticker: str)->str:
 
     return str(f"Stock price over the last month for {stock_ticker}: {last_months_close}")
 
-
-import time
-
 # llm model for summarization
-def summarize_news(news_data: List[str])-> str:
-    combined_text = "\n\n".join(news_data)
+# def summarize_news(news_data: List[str])-> str:
+#     combined_text = "\n\n".join(news_data)
 
-    prompt = (
-        f"Summarize the following news, article by article. "
-        f"Only include relevant and factual information. Remove any ad content or links.\n\n{combined_text}"
-    )
-    print("********Starting summary generation through LLM**********")
-    ## liteLLM model
-    # response = completion(
-    #         model="ollama/phi3",
-    #     messages=[
-    #         {"role": "user", "content": prompt}
-    #     ],
-    #     api_base="http://localhost:11434"
-    #         )
-    # content = response.choices[0].message.content
-    start_time = time.time()
+#     prompt = (
+#         f"Summarize the following news, article by article. "
+#         f"Only include relevant and factual information. Remove any ad content or links.\n\n{combined_text}"
+#     )
+#     print("********Starting summary generation through LLM**********")
+#     ## liteLLM model
+#     # response = completion(
+#     #         model="ollama/phi3",
+#     #     messages=[
+#     #         {"role": "user", "content": prompt}
+#     #     ],
+#     #     api_base="http://localhost:11434"
+#     #         )
+#     # content = response.choices[0].message.content
+#     start_time = time.time()
     
     
-    response = chat_with_model(prompt)
-    end_time = time.time()
-    elapsed_time = end_time - start_time
-    print(f"********Summary generated inside function in {elapsed_time}**********")
-    #response being a list or a string
-    content = response[0] if isinstance(response, list) else response
-    return content
+#     response = chat_with_model(prompt)
+#     end_time = time.time()
+#     elapsed_time = end_time - start_time
+#     print(f"********Summary generated inside function in {elapsed_time}**********")
+#     #response being a list or a string
+#     content = response[0] if isinstance(response, list) else response
+#     return content
 
 @mcp.tool()
 def latest_news(user_query: str)->str:
