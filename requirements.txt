@@ -24,3 +24,5 @@ numpy>=1.22,<2.0
 requests
 yfinance
 colorama
+lxml
+lxml-html-clean
