@@ -30,7 +30,7 @@ export default function GenreNews({ genre }: { genre: string }) {
         setError("Response was not in the expected array format.");
         setNewsArray([]);
       }
-    } catch (err) {
+    } catch{
       setError("Error fetching update.");
       setNewsArray([]);
     }
