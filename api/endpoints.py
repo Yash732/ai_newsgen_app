@@ -49,6 +49,12 @@ async def greet():
     return {
         "response": "Hello user"
     }
+@app.get("/")
+def health_check():
+    """
+    A simple endpoint to confirm the server is running.
+    """
+    return {"status": "ok"}
 
 @app.post("/run_graph")
 async def run_graph(input:GraphInput):

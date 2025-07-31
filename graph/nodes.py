@@ -148,7 +148,7 @@ async def handle_user_query(state: State):
             # for local testing
             # "url" :"http://127.0.0.1:8000/mcp",
 
-            "url": "https://ai-newsgen-app.onrender.com",
+            "url": "https://mcp-server-fxbm.onrender.com",
             "transport": "streamable_http"
         }}
     )
