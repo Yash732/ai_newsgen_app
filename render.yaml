@@ -1,9 +1,42 @@
 services:
   - type: web
-    name: yfin-mcp-server
-    runtime: python
-    buildCommand: pip install -r requirements.txt
-    startCommand: python server.py
+    name: mcp-server
+    env: python
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "python -m api.mcp_server"
     envVars:
-      - key: PORT
-        value: 8000
+      - key: PYTHON_VERSION
+        value: 3.11
+      - key: SUPABASE_URL
+        fromSecret: SUPABASE_URL
+      - key: SUPABASE_KEY
+        fromSecret: SUPABASE_KEY
+      - key: TAVILY_API_KEY
+        fromSecret: TAVILY_API_KEY
+      - key: EMBED_KEY
+        fromSecret: EMBED_KEY
+      - key: OPENAI_API_KEY
+        fromSecret: OPENAI_API_KEY
+      - key: AZURE_ENDPOINT
+        fromSecret: AZURE_ENDPOINT
+
+  - type: web
+    name: fastapi-endpoints
+    env: python
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "uvicorn api.endpoints:app --host 0.0.0.0 --port 8080"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11
+      - key: SUPABASE_URL
+        fromSecret: SUPABASE_URL
+      - key: SUPABASE_KEY
+        fromSecret: SUPABASE_KEY
+      - key: TAVILY_API_KEY
+        fromSecret: TAVILY_API_KEY
+      - key: EMBED_KEY
+        fromSecret: EMBED_KEY
+      - key: OPENAI_API_KEY
+        fromSecret: OPENAI_API_KEY
+      - key: AZURE_ENDPOINT
+        fromSecret: AZURE_ENDPOINT

@@ -144,8 +144,11 @@ async def handle_user_query(state: State):
     # user_input = "news summaries related to Meesho and PhonePe from vector database"
     
     client = MultiServerMCPClient({
-        "yfin-server": {
-            "url" :"http://127.0.0.1:8000/mcp",
+        "mcp-server": {
+            # for local testing
+            # "url" :"http://127.0.0.1:8000/mcp",
+
+            "url": "https://ai-newsgen-app.onrender.com",
             "transport": "streamable_http"
         }}
     )
