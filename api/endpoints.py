@@ -5,6 +5,7 @@ from graph.graph_builder import build_graph
 import datetime
 from ai_resources.initialize_db import download_text_from_bucket
 import re
+from typing import Optional
 app = FastAPI()
 
 app.add_middleware(
@@ -22,6 +23,7 @@ with open("ai_newsgen_graph.png", "wb") as f:
 class GraphInput(BaseModel):
     mode: str # update or query
     user_input: str = "" #Optional
+    genre: Optional[str] = None
 
 def parse_articles_to_json(text: str):
     """
@@ -52,17 +54,18 @@ async def greet():
 async def run_graph(input:GraphInput):
    
     state = {
-        "mode": input.mode
+        "mode": input.mode,
     }
     if input.mode == "update":
-        print("Entered UPDATE mode +++")
+        genre = input.genre or "finance"
+        print(f"Entered UPDATE mode +++ with genre: {genre}")
         today = datetime.date.today().isoformat()
-        file_name = f"{today}.txt"
+        file_name = f"{genre}_{today}.txt"
         try:
             summary = download_text_from_bucket("dailynews", file_name)
             print("Summary fetched +++", summary[:50])
             articles = parse_articles_to_json(summary)
-            print("Parsed articles +++", articles)
+
             return {"response": articles}
         except Exception as e:
             return {"error": f"Could not fetch today's update: {str(e)}"}
@@ -75,7 +78,7 @@ async def run_graph(input:GraphInput):
             summary = output.get("summary", "No response from backend")
             print("Summary fetched +++", summary[:50])
             articles = parse_articles_to_json(summary)
-            print("Parsed articles +++", articles)
+
             return {"response": articles}
         except Exception as e:
             return {

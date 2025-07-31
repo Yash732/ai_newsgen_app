@@ -11,7 +11,7 @@ from langchain_mcp_adapters.tools import load_mcp_tools
 from smolagents import ToolCallingAgent, LiteLLMModel
 
 # News genres considered for the application
-genres = ['finance', 'sports', 'technology', 'politics', 'gaming']
+# genres = ['finance', 'sports', 'technology', 'politics', 'gaming']
 
 GENRE_RSS_FEEDS = {
     "finance": [
@@ -41,13 +41,22 @@ def news_scraper(state: State):
     Scrapes news articles from the provided genre and urls and processes them.
     """
     genre = state.get("genre")
-    rss_url_list = GENRE_RSS_FEEDS(genre, [])
+    rss_url_list = GENRE_RSS_FEEDS.get(genre, [])
+    print(f"Entered news_scraper node with genre: {rss_url_list}")
+    
     corpus = []
+    max_articles = 15
+    article_count = 0
     # Parsing the RSS feeds from Economic Times and NDTV 
     for news_url in rss_url_list:
+        if article_count >= max_articles:
+            break  # Stop if we already have enough articles
+        print("Entered feedparser loop with url: ", news_url)
         parsed_feed = feedparser.parse(news_url)
         # Iterating through each entry in the feed
         for entry in parsed_feed.entries:
+            if article_count >= max_articles:
+                break  # Stop if limit reached
             try:
                 url = entry.link
                 # published = entry.published_parsed
@@ -60,6 +69,8 @@ def news_scraper(state: State):
                 # adding article title and text to corpus
                 data = article.title + '\n' + article.text
                 corpus.append(data)
+
+                article_count += 1
             except Exception as e:
                 print(f"Error processing article {entry.title}: {e}")
                 continue

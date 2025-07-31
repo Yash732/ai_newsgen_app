@@ -7,6 +7,7 @@ supabase
 dotenv
 sentence_transformers
 newspaper3k
+newspaper
 feedparser
 langchain
 langchain_community
@@ -17,3 +18,15 @@ uvicorn
 litellm
 ollama
 langchain_mcp_adapters
+httpx
+python-dotenv
+pydantic
+numpy
+os
+typing
+datetime
+re
+requests
+yfinance
+colorama
+asyncio

@@ -37,7 +37,7 @@ def build_graph():
 
     # User query flow (chat interface)
     builder.add_edge("tool_handler", "summarize_articles")
-
+    
     return builder.compile()
 
 
