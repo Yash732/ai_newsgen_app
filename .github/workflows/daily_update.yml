@@ -32,4 +32,4 @@ jobs:
           endpoint: ${{ secrets.AZURE_ENDPOINT }}
           EMBED_KEY: ${{ secrets.EMBED_KEY }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
-        run: python api/update_graph.py
+        run: python -m api.update_graph
