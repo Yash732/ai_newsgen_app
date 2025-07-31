@@ -19,13 +19,8 @@ ollama
 langchain_mcp_adapters
 httpx
 python-dotenv
-pydantic
-numpy
-os
-typing
-datetime
-re
+pydantic>=2.0
+numpy>=1.22,<2.0
 requests
 yfinance
 colorama
-asyncio
