@@ -32,4 +32,7 @@ jobs:
           endpoint: ${{ secrets.AZURE_ENDPOINT }}
           EMBED_KEY: ${{ secrets.EMBED_KEY }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL}}
+          DATABSE_URL: ${{secrets.DATABASE_URL}}
+          
         run: python -m api.update_graph

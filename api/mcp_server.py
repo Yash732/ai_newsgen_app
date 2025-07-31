@@ -17,7 +17,9 @@ from ai_resources.initialize_db import get_embeddings, insert_embeddings
 # mcp connection
 mcp = FastMCP(
     "yfin-server",
-    host = "127.0.0.1", 
+    # for local testing, you can use "
+    # host = "127.0.0.1",
+    host= "0.0.0.0" ,
     port = 8000,
     )
 
