@@ -29,7 +29,7 @@ jobs:
       - name: Run update_graph
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          endpoint: ${{ secrets.AZURE_ENDPOINT }}
+          endpoint: ${{ secrets.endpoint }}
           EMBED_KEY: ${{ secrets.EMBED_KEY }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL}}
