@@ -37,10 +37,8 @@ It supports:
 | **LangChain tools** | Tool wrappers and agents with memory support |
 
 ---
+## For running locally (Change all deployment paths list api and servers to localhost )
 
-## Project Structure
-  To be added
-  
 ## Running the Backend
 
 ### 1. Setup virtualenv and install dependencies
@@ -64,4 +62,15 @@ python api/mcp_server.py
 uvicorn endpoints:app --reload --port 8080 
 ```
 ## Frontend
-  To be added
+  
+This is the frontend for the AI NewsGen project built with [Next.js](https://nextjs.org/).  
+It connects to a backend MCP agent and FastAPI API to deliver real-time news summaries using LLMs and semantic search.
+
+```bash
+cd ai-newsgen-frontend
+npm install
+npm run dev
+```
+
+# IMPORTANT
+Vercel app is working but backend apis are suspended due to overlaying cost. Kindly notify in order to restart the backend apis.

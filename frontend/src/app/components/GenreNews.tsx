@@ -13,8 +13,8 @@ export default function GenreNews({ genre }: { genre: string }) {
   const fetchNewsSummary = async () => {
     try {
       // for local testing
-      // const res = await fetch("http://localhost:8080/run_graph",{
-      const res = await fetch("https://fastapi-backend-n2gy.onrender.com/run_graph", {
+      const res = await fetch("http://localhost:8080/run_graph",{
+      // const res = await fetch("https://fastapi-backend-n2gy.onrender.com/run_graph", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

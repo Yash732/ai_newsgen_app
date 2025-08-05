@@ -146,9 +146,9 @@ async def handle_user_query(state: State):
     client = MultiServerMCPClient({
         "mcp-server": {
             # for local testing
-            # "url" :"http://127.0.0.1:8000/mcp",
+            "url" :"http://127.0.0.1:8000/mcp",
 
-            "url": "https://mcp-server-fxbm.onrender.com/mcp",
+            # "url": "https://mcp-server-fxbm.onrender.com/mcp",
             "transport": "streamable_http"
         }}
     )
