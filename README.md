@@ -2,7 +2,7 @@
 
 ## Backend
 
-A backend system for fetching, summarizing, and interacting with the latest news and stock updates using **LangGraph**, **FastAPI**, and a set of AI tools exposed via an **MCP (Multi-Component Protocol) server**.
+A backend system for fetching, summarizing, and interacting with the latest news and stock updates using **LangGraph**, **FastAPI**, and a set of AI tools exposed via an **MCP (Model Context Protocol) server**.
 
 It supports:
 - Automatic news scraping and summarization
